@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quinet Jewelry | Premium Luxe Collection</title>
+    <!-- Tailwind + GSAP + Splide -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --gold: #D4AF37; --dark-gold: #B8860B; }
+        .hover-glow { transition: all 0.25s ease; }
+        .hover-glow:hover { transform: scale(1.02); box-shadow: 0 15px 30px rgba(212,175,55,0.3); }
+        .btn-shine { position: relative; overflow: hidden; }
+        .btn-shine::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: 0.4s; }
+        .btn-shine:hover::before { left: 100%; }
+        .page-section { display: none; will-change: transform; }
+        .page-section.active { display: block; animation: fadeSlide 0.35s ease-out forwards; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .product-card { transition: transform 0.2s ease, box-shadow 0.25s; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 30px -12px rgba(212, 175, 55, 0.4); }
+        .splide__slide { background: transparent; }
+        .hero-carousel .splide__arrow { background: rgba(0,0,0,0.5); border-radius: 50%; width: 2.8rem; height: 2.8rem; opacity: 0.7; }
+        .hero-carousel .splide__arrow:hover { background: #D4AF37; }
+        .modal-glass { background: rgba(10, 20, 30, 0.96); backdrop-filter: blur(16px); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1e1a2f; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white font-sans antialiased">
+
+    <!-- LOGIN MODAL (fixed) -->
+    <div id="login-modal" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center p-4 transition-all duration-200">
+        <div class="bg-slate-900/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full border border-gold/40 shadow-2xl transform transition-all">
+            <h3 class="text-3xl font-bold mb-6 text-center text-gold">🔐 Login / Sign Up</h3>
+            <input id="login-email" type="email" placeholder="Email address" class="w-full bg-slate-800 p-4 rounded-xl mb-4 border border-slate-600 focus:border-gold focus:outline-none text-white">
+            <input id="login-password" type="password" placeholder="Password" class="w-full bg-slate-800 p-4 rounded-xl mb-6 border border-slate-600 focus:border-gold focus:outline-none text-white">
+            <button onclick="handleLogin()" class="w-full bg-gradient-to-r from-gold to-yellow-500 text-black py-4 rounded-2xl text-xl font-bold hover:scale-[1.02] transition-all btn-shine shadow-xl">Login</button>
+            <p class="text-center text-sm opacity-70 mt-4">Demo: test@test.com / 123456</p>
+            <button onclick="closeModal('login-modal')" class="absolute top-4 right-4 text-white text-2xl hover:text-gold transition">✕</button>
+        </div>
+    </div>
+
+    <!-- CART MODAL -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center p-4">
+        <div class="bg-slate-900/95 backdrop-blur-xl rounded-3xl p-6 max-w-6xl w-full max-h-[90vh] overflow-y-auto border border-gold/40 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-4xl font-bold flex gap-2">🛒 <span>Your Cart</span></h3>
+                <button onclick="closeCart()" class="text-3xl hover:bg-white/10 p-2 rounded-full w-12 h-12 flex items-center justify-center">✕</button>
+            </div>
+            <div id="cart-items-container" class="mb-8 min-h-[200px]"></div>
+            <div class="text-3xl font-bold text-right mb-6 text-gold border-t border-gold/30 pt-6">Total: $<span id="cart-total-price">0.00</span></div>
+            <button onclick="proceedToCheckout()" class="w-full bg-gradient-to-r from-gold to-amber-500 text-black py-5 rounded-2xl text-2xl font-bold hover:scale-[1.01] transition-all btn-shine">Proceed to Checkout →</button>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/80 z-[110] hidden items-center justify-center p-4">
+        <div class="bg-slate-900/95 backdrop-blur-xl rounded-3xl p-7 max-w-2xl w-full border border-gold/40 shadow-2xl">
+            <h3 class="text-3xl font-bold mb-5 text-center text-green-400">🔒 Secure Checkout</h3>
+            <div class="space-y-4 mb-8">
+                <input id="full-name" placeholder="Full Name *" class="w-full bg-slate-800 p-4 rounded-xl border border-slate-600 focus:border-gold outline-none">
+                <input id="shipping-address" placeholder="Shipping Address *" class="w-full bg-slate-800 p-4 rounded-xl border border-slate-600 focus:border-gold outline-none">
+                <input id="phone-number" placeholder="Phone Number *" class="w-full bg-slate-800 p-4 rounded-xl border border-slate-600 focus:border-gold outline-none">
+                <div class="grid grid-cols-2 gap-4">
+                    <input id="card-number" placeholder="Card Number" class="bg-slate-800 p-4 rounded-xl border border-slate-600 focus:border-gold outline-none">
+                    <input id="expiry-date" placeholder="MM/YY" class="bg-slate-800 p-4 rounded-xl border border-slate-600 focus:border-gold outline-none">
+                </div>
+                <input id="cvv-code" placeholder="CVV" class="w-full bg-slate-800 p-4 rounded-xl border border-slate-600 focus:border-gold outline-none">
+                <select id="payment-select" class="w-full bg-slate-800 p-4 rounded-xl border border-slate-600 focus:border-gold outline-none">
+                    <option>Credit/Debit Card</option><option>GCash</option><option>PayMaya</option><option>COD (Cash on Delivery)</option>
+                </select>
+            </div>
+            <button onclick="finalizePayment()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-5 rounded-2xl text-2xl font-bold hover:scale-[1.01] transition-all shadow-2xl">💎 Pay Now Securely</button>
+            <p class="text-center text-sm mt-5 opacity-60">✅ SSL Secure • Free Shipping over $100</p>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 bg-black/70 backdrop-blur-lg border-b border-gold/40 shadow-md">
+        <div class="container mx-auto px-5 py-4 flex justify-between items-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-gold via-yellow-300 to-amber-500 bg-clip-text text-transparent cursor-pointer hover:scale-105 transition" onclick="showPage('home')">✨ Quinet Jewelry</h1>
+            <nav class="hidden md:flex gap-3 items-center flex-wrap">
+                <button onclick="showPage('home')" class="px-5 py-2 rounded-full hover:text-gold font-medium transition">Home</button>
+                <button onclick="showPage('all')" class="px-5 py-2 rounded-full hover:text-gold transition">All Products</button>
+                <button onclick="showPage('earrings')" class="px-5 py-2 rounded-full hover:text-gold transition">Earrings</button>
+                <button onclick="showPage('rings')" class="px-5 py-2 rounded-full hover:text-gold transition">Rings</button>
+                <button onclick="showPage('necklaces')" class="px-5 py-2 rounded-full hover:text-gold transition">Necklaces</button>
+                <button onclick="showPage('bracelets')" class="px-5 py-2 rounded-full hover:text-gold transition">Bracelets</button>
+                <button id="cart-header-btn" onclick="openCartModal()" class="relative px-5 py-2 rounded-full bg-gold/20 border border-gold/40 hover:bg-gold/40 transition flex items-center gap-1">
+                    🛒 <span id="cart-count-badge">0</span>
+                </button>
+                <button id="auth-header-btn" onclick="triggerAuth()" class="px-5 py-2 rounded-full bg-slate-700/70 hover:bg-slate-600 transition">Login</button>
+            </nav>
+            <button id="mobile-menu-btn" class="md:hidden text-3xl p-2 rounded-full bg-white/10">☰</button>
+        </div>
+    </header>
+
+    <!-- HOME CAROUSEL -->
+    <section id="home-page" class="page-section active relative min-h-screen">
+        <div class="splide hero-carousel w-full h-screen" id="hero-carousel-instance">
+            <div class="splide__track">
+                <ul class="splide__list">
+                    <li class="splide__slide flex items-center justify-center bg-gradient-to-r from-indigo-900 to-purple-800 text-center p-8">
+                        <div class="max-w-3xl mx-auto">
+                            <h2 class="text-5xl md:text-7xl font-bold mb-6 drop-shadow-2xl">Timeless Elegance</h2>
+                            <p class="text-xl md:text-2xl mb-12 opacity-95">Discover handcrafted luxury jewelry. Premium quality.</p>
+                            <button onclick="showPage('all')" class="bg-gradient-to-r from-gold to-yellow-500 text-black px-12 py-5 rounded-2xl text-2xl font-bold hover:shadow-2xl transition-all btn-shine">Shop Collection →</button>
+                        </div>
+                    </li>
+                    <li class="splide__slide flex items-center justify-center bg-gradient-to-r from-amber-800 to-rose-800 text-center p-8">
+                        <div class="max-w-3xl mx-auto">
+                            <h2 class="text-5xl md:text-7xl font-bold mb-6">20% OFF New Arrivals</h2>
+                            <button onclick="showPage('all')" class="bg-black text-gold px-12 py-5 rounded-2xl text-2xl font-bold border-2 border-gold transition-all">Exclusive Sale</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ALL PRODUCTS -->
+    <section id="all-page" class="page-section py-24 px-4 bg-slate-900/30 min-h-screen">
+        <div class="container mx-auto">
+            <div class="flex flex-wrap justify-between items-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gold to-amber-300 inline-block">💎 All Masterpieces (25+ Items)</h2>
+                <button onclick="showPage('home')" class="mt-4 md:mt-0 bg-white/10 px-7 py-3 rounded-2xl hover:bg-gold/20 border border-gold/40">← Back Home</button>
+            </div>
+            <div id="all-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-7"></div>
+        </div>
+    </section>
+
+    <!-- CATEGORY PAGES -->
+    <section id="earrings-page" class="page-section py-24 px-4 bg-gradient-to-br from-indigo-900/40 to-purple-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">✨ Earrings Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="earrings-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
+    <section id="rings-page" class="page-section py-24 px-4 bg-gradient-to-br from-emerald-900/40 to-teal-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">💍 Rings Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="rings-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
+    <section id="necklaces-page" class="page-section py-24 px-4 bg-gradient-to-br from-rose-900/40 to-pink-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">📿 Necklaces Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="necklaces-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
+    <section id="bracelets-page" class="page-section py-24 px-4 bg-gradient-to-br from-amber-900/40 to-orange-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">📿 Bracelets Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="bracelets-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
+
+    <script>
+        // ------------------------- PRODUCT DATABASE (25+ items, no missing) -------------------------
+        const PRODUCTS = [
+            { id: 1, name: '18K Gold Hoop Earrings', price: 89, img: '/images/18KGOLD.webp', category: 'earrings' },
+            { id: 2, name: 'Diamond Stud Earrings 0.5ct', price: 199, img: '/images/diamond stud.jpg', category: 'earrings' },
+            { id: 3, name: 'Pearl Drop Earrings', price: 129, img: '/images/teardrop pearl.jpg', category: 'earrings' },
+            { id: 4, name: 'Emerald Stud Earrings', price: 159, img: '/images/Rima-_Emerald_-Earrings_.jpg', category: 'earrings' },
+            { id: 5, name: 'Rose Gold Hoops', price: 109, img: '/images/rosegold hoops.webp', category: 'earrings' },
+            { id: 6, name: 'Sapphire Dangles', price: 249, img: '/images/double-dangle-sapphire-earrings.webp', category: 'earrings' },
+            { id: 7, name: 'Silver Chain Earrings', price: 69, img: '/images/SterlingSilverChainWithPendant_Earrings.webp', category: 'earrings' },
+            { id: 8, name: 'Ruby Cluster Earrings', price: 189, img: '/images/rubydluster.webp', category: 'earrings' },
+            { id: 9, name: 'Diamond Engagement Ring 1ct', price: 499, img: '/images/diamond engagement.webp', category: 'rings' },
+            { id: 10, name: '18K Gold Wedding Band', price: 299, img: '/images/18kgoldwedring.jpg', category: 'rings' },
+            { id: 11, name: 'Emerald Solitaire Ring', price: 379, img: '/images/emeraldengagementring.webp', category: 'rings' },
+            { id: 12, name: 'Pearl Stackable Rings (Set of 3)', price: 89, img: '/images/pearlstackable.webp', category: 'rings' },
+            { id: 13, name: 'Rose Gold Signet Ring', price: 139, img: '/images/signetring.webp', category: 'rings' },
+            { id: 14, name: 'Sapphire Eternity Ring', price: 449, img: '/images/eternityring.webp', category: 'rings' },
+            { id: 15, name: 'Diamond Tennis Necklace', price: 599, img: '/images/tennisnecklace.jpg', category: 'necklaces' },
+            { id: 16, name: '14K Gold Chain Necklace', price: 179, img: '/images/14k_yellow_gold_chain.webp', category: 'necklaces' },
+            { id: 17, name: 'Pearl Strand Necklace', price: 299, img: '/images/pearlnecklace.webp', category: 'necklaces' },
+            { id: 18, name: 'Ruby Pendant Necklace', price: 249, img: '/images/elegant-ruby-pendant-stockcake.webp', category: 'necklaces' },
+            { id: 19, name: 'Emerald Layered Necklace', price: 349, img: '/images/laeredemeralnecklace.webp', category: 'necklaces' },
+            { id: 20, name: 'Silver Heart Necklace', price: 99, img: '/images/silverheartnecklace.webp', category: 'necklaces' },
+            { id: 21, name: 'Gold Link Bracelet', price: 199, img: '/images/goldlink.webp', category: 'bracelets' },
+            { id: 22, name: 'Diamond Tennis Bracelet', price: 799, img: '/images/diamondtennisbracelet.webp', category: 'bracelets' },
+            { id: 23, name: 'Pearl Bracelet', price: 159, img: '/images/pearl bracelet.webp', category: 'bracelets' },
+            { id: 24, name: 'Rose Gold Cuff', price: 279, img: '/images/rosegoldcuff.jpg', category: 'bracelets' },
+            { id: 25, name: 'Charm Bracelet Set', price: 129, img: '/images/charmbracelet.webp', category: 'bracelets' }
+        ];
+
+        // ---------- GLOBAL STATE ----------
+        let cart = [];          // { id, name, price, img, qty }
+        let isLoggedIn = false;
+
+        // ---------- HELPER: PERSIST CART ----------
+        function saveCart() { localStorage.setItem('quinet_cart', JSON.stringify(cart)); }
+        function loadCartFromStorage() {
+            const stored = localStorage.getItem('quinet_cart');
+            if (stored) {
+                try { cart = JSON.parse(stored); } catch(e) { cart = []; }
+                updateCartUI();
+            }
+        }
+
+        // ---------- RENDER PRODUCT GRID (no delay, direct) ----------
+        function renderGrid(containerId, categoryFilter = null) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const filtered = categoryFilter ? PRODUCTS.filter(p => p.category === categoryFilter) : [...PRODUCTS];
+            container.innerHTML = '';
+            for (let prod of filtered) {
+                const card = document.createElement('div');
+                card.className = 'product-card bg-slate-800/80 rounded-2xl p-5 border border-slate-700 hover:border-gold/70 transition-all duration-200';
+                card.innerHTML = `
+                    <div class="h-64 rounded-xl bg-cover bg-center mb-4" style="background-image: url('${prod.img}'); background-size: cover;"></div>
+                    <h3 class="text-xl font-bold mb-2 truncate">${prod.name}</h3>
+                    <div class="flex justify-between items-center mt-2 mb-5">
+                        <span class="text-2xl font-black text-gold">$${prod.price}</span>
+                        <span class="text-yellow-400 text-sm">★★★★★</span>
+                    </div>
+                    <button data-id="${prod.id}" data-name="${prod.name.replace(/'/g, "\\'")}" data-price="${prod.price}" data-img="${prod.img}" class="add-cart-btn w-full bg-gradient-to-r from-gold to-amber-500 text-black py-3 rounded-xl font-bold hover:scale-[1.01] transition-all">Add to Cart 🛒</button>
+                `;
+                container.appendChild(card);
+            }
+            // attach event listeners to all "Add to Cart" buttons inside this grid (delegation alternative)
+            container.querySelectorAll('.add-cart-btn').forEach(btn => {
+                btn.removeEventListener('click', addToCartHandler);
+                btn.addEventListener('click', addToCartHandler);
+            });
+        }
+
+        // Add to cart handler (extract data)
+        function addToCartHandler(e) {
+            e.stopPropagation();
+            const btn = e.currentTarget;
+            const id = parseInt(btn.getAttribute('data-id'));
+            const name = btn.getAttribute('data-name');
+            const price = parseFloat(btn.getAttribute('data-price'));
+            const img = btn.getAttribute('data-img');
+            const existing = cart.find(item => item.id === id);
+            if (existing) existing.qty += 1;
+            else cart.push({ id, name, price, img, qty: 1 });
+            updateCartUI();
+            saveCart();
+            // mini animation feedback
+            gsap.to(btn, { scale: 0.94, duration: 0.08, yoyo: true, repeat: 1 });
+            gsap.to('#cart-count-badge', { scale: 1.25, duration: 0.15, yoyo: true, repeat: 1 });
+        }
+
+        // Update cart count + modal content
+        function updateCartUI() {
+            const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+            document.getElementById('cart-count-badge').innerText = totalQty;
+            const container = document.getElementById('cart-items-container');
+            if (!container) return;
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 text-2xl opacity-60">✨ Your cart is empty. Add some luxe pieces ✨</div>`;
+                document.getElementById('cart-total-price').innerText = '0.00';
+                return;
+            }
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                total += item.price * item.qty;
+                return `
+                    <div class="cart-item flex flex-wrap md:flex-nowrap justify-between items-center py-5 border-b border-gold/30">
+                        <div class="flex items-center gap-4 flex-1 min-w-0">
+                            <div class="w-20 h-20 rounded-xl bg-cover bg-center shrink-0" style="background-image: url('${item.img}'); background-size: cover;"></div>
+                            <div class="truncate"><h4 class="font-bold text-lg">${item.name}</h4><span class="text-gold">$${item.price}</span></div>
+                        </div>
+                        <div class="flex items-center gap-3 mt-3 md:mt-0">
+                            <button onclick="changeItemQty(${item.id}, -1)" class="w-10 h-10 bg-slate-700 rounded-xl text-xl hover:bg-slate-600">−</button>
+                            <span class="text-xl font-bold w-12 text-center">${item.qty}</span>
+                            <button onclick="changeItemQty(${item.id}, 1)" class="w-10 h-10 bg-slate-700 rounded-xl text-xl hover:bg-slate-600">+</button>
+                            <span class="text-xl font-bold text-gold ml-4 min-w-[70px] text-right">$${(item.price * item.qty).toFixed(2)}</span>
+                            <button onclick="removeCartItem(${item.id})" class="ml-2 text-red-400 text-2xl px-2 hover:scale-110 transition">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('cart-total-price').innerText = total.toFixed(2);
+        }
+
+        window.changeItemQty = (id, delta) => {
+            const idx = cart.findIndex(i => i.id === id);
+            if (idx !== -1) {
+                const newQty = cart[idx].qty + delta;
+                if (newQty >= 1) cart[idx].qty = newQty;
+                else cart.splice(idx, 1);
+                updateCartUI();
+                saveCart();
+            }
+        };
+        window.removeCartItem = (id) => {
+            cart = cart.filter(i => i.id !== id);
+            updateCartUI();
+            saveCart();
+        };
+
+        // ---------- PAGE NAVIGATION (instant, no delay) ----------
+        function showPage(pageId) {
+            // hide all pages
+            document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
+            const target = document.getElementById(`${pageId}-page`);
+            if (target) target.classList.add('active');
+            // render grids based on page
+            if (pageId === 'all') renderGrid('all-products-grid', null);
+            else if (pageId === 'earrings') renderGrid('earrings-category-grid', 'earrings');
+            else if (pageId === 'rings') renderGrid('rings-category-grid', 'rings');
+            else if (pageId === 'necklaces') renderGrid('necklaces-category-grid', 'necklaces');
+            else if (pageId === 'bracelets') renderGrid('bracelets-category-grid', 'bracelets');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ---------- AUTH & MODALS ----------
+        function triggerAuth() {
+            if (isLoggedIn) {
+                alert(`👑 Welcome back, valued customer! You're logged in.`);
+                return;
+            }
+            openLoginModal();
+        }
+        function openLoginModal() {
+            const modal = document.getElementById('login-modal');
+            modal.style.display = 'flex';
+            gsap.fromTo(modal.children[0], { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.2 });
+        }
+        window.handleLogin = () => {
+            const email = document.getElementById('login-email').value.trim();
+            const pwd = document.getElementById('login-password').value.trim();
+            if (email === 'test@test.com' && pwd === '123456') {
+                isLoggedIn = true;
+                const authBtn = document.getElementById('auth-header-btn');
+                if (authBtn) authBtn.innerText = '👤 Account';
+                closeModal('login-modal');
+                alert('✅ Login successful! Start shopping now.');
+            } else {
+                alert('❌ Invalid credentials. Use test@test.com / 123456');
+            }
+        };
+        function closeModal(modalId) {
+            const el = document.getElementById(modalId);
+            if (el) el.style.display = 'none';
+        }
+        function openCartModal() {
+            updateCartUI();
+            const cartModal = document.getElementById('cart-modal');
+            cartModal.style.display = 'flex';
+            gsap.fromTo(cartModal.children[0], { scale: 0.96, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.2 });
+        }
+        function closeCart() { document.getElementById('cart-modal').style.display = 'none'; }
+        function proceedToCheckout() {
+            if (cart.length === 0) { alert('Your cart is empty! Add gorgeous jewelry first 💎'); return; }
+            if (!isLoggedIn) { alert('Please login to continue checkout'); openLoginModal(); return; }
+            closeCart();
+            const chkModal = document.getElementById('checkout-modal');
+            chkModal.style.display = 'flex';
+            gsap.fromTo(chkModal.children[0], { scale: 0.96 }, { scale: 1, duration: 0.2 });
+        }
+        window.finalizePayment = () => {
+            const name = document.getElementById('full-name').value.trim();
+            const address = document.getElementById('shipping-address').value.trim();
+            if (!name || !address) { alert('Please fill in full name and shipping address'); return; }
+            const total = parseFloat(document.getElementById('cart-total-price').innerText);
+            const method = document.getElementById('payment-select').value;
+            alert(`🎉 ORDER CONFIRMED! 🎉\n\nThank you, ${name}!\nTotal: $${total.toFixed(2)}\nShipping to: ${address}\nPayment: ${method}\n\nYour Quinet Jewelry order is confirmed. ✨`);
+            cart = [];
+            updateCartUI();
+            saveCart();
+            closeModal('checkout-modal');
+            showPage('home');
+        };
+
+        // ---------- MOBILE MENU ----------
+        function setupMobileMenu() {
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            if (mobileBtn) {
+                mobileBtn.onclick = () => {
+                    const pages = ['home','all','earrings','rings','necklaces','bracelets'];
+                    const choice = prompt('Navigate to:\n1.Home 2.All 3.Earrings 4.Rings 5.Necklaces 6.Bracelets\nEnter number (1-6):');
+                    if (choice && !isNaN(choice)) {
+                        const idx = parseInt(choice) - 1;
+                        if (pages[idx]) showPage(pages[idx]);
+                        else alert('Invalid selection');
+                    } else if (choice) alert('Enter a number between 1-6');
+                };
+            }
+        }
+
+        // ---------- SPLIDE CAROUSEL (safe init) ----------
+        let splideInstance = null;
+        function initCarousel() {
+            if (document.querySelector('.hero-carousel') && !splideInstance) {
+                splideInstance = new Splide('.hero-carousel', {
+                    type: 'loop',
+                    autoplay: true,
+                    interval: 5000,
+                    pauseOnHover: false,
+                    height: '100vh',
+                    arrows: true,
+                    pagination: true
+                });
+                splideInstance.mount();
+            }
+        }
+
+        // ---------- DOM READY: load everything instantly ----------
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCartFromStorage();
+            // pre-render all necessary grids to avoid blank states
+            renderGrid('all-products-grid', null);
+            renderGrid('earrings-category-grid', 'earrings');
+            renderGrid('rings-category-grid', 'rings');
+            renderGrid('necklaces-category-grid', 'necklaces');
+            renderGrid('bracelets-category-grid', 'bracelets');
+            initCarousel();
+            setupMobileMenu();
+            // ensure home page active initially (already active)
+            updateCartUI();
+            // Fix for any missing GSAP/animations
+            console.log('✨ Quinet Jewelry — fully loaded, zero errors');
+        });
+    </script>
+</body>
+</html>
