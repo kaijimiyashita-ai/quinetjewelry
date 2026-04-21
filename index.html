@@ -29,9 +29,13 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #1e1a2f; }
         ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+        footer a { transition: all 0.2s; }
+        footer a:hover { color: #D4AF37; transform: translateY(-2px); display: inline-block; }
+        .social-icon { transition: transform 0.2s, filter 0.2s; }
+        .social-icon:hover { transform: translateY(-4px) scale(1.1); filter: drop-shadow(0 0 6px #D4AF37); }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white font-sans antialiased">
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white font-sans antialiased flex flex-col min-h-screen">
 
     <!-- LOGIN MODAL (fixed) -->
     <div id="login-modal" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center p-4 transition-all duration-200">
@@ -100,48 +104,100 @@
         </div>
     </header>
 
-    <!-- HOME CAROUSEL -->
-    <section id="home-page" class="page-section active relative min-h-screen">
-        <div class="splide hero-carousel w-full h-screen" id="hero-carousel-instance">
-            <div class="splide__track">
-                <ul class="splide__list">
-                    <li class="splide__slide flex items-center justify-center bg-gradient-to-r from-indigo-900 to-purple-800 text-center p-8">
-                        <div class="max-w-3xl mx-auto">
-                            <h2 class="text-5xl md:text-7xl font-bold mb-6 drop-shadow-2xl">Timeless Elegance</h2>
-                            <p class="text-xl md:text-2xl mb-12 opacity-95">Discover handcrafted luxury jewelry. Premium quality.</p>
-                            <button onclick="showPage('all')" class="bg-gradient-to-r from-gold to-yellow-500 text-black px-12 py-5 rounded-2xl text-2xl font-bold hover:shadow-2xl transition-all btn-shine">Shop Collection →</button>
-                        </div>
-                    </li>
-                    <li class="splide__slide flex items-center justify-center bg-gradient-to-r from-amber-800 to-rose-800 text-center p-8">
-                        <div class="max-w-3xl mx-auto">
-                            <h2 class="text-5xl md:text-7xl font-bold mb-6">20% OFF New Arrivals</h2>
-                            <button onclick="showPage('all')" class="bg-black text-gold px-12 py-5 rounded-2xl text-2xl font-bold border-2 border-gold transition-all">Exclusive Sale</button>
-                        </div>
-                    </li>
+    <!-- MAIN CONTENT (pages) -->
+    <main class="flex-grow">
+        <!-- HOME CAROUSEL -->
+        <section id="home-page" class="page-section active relative min-h-screen">
+            <div class="splide hero-carousel w-full h-screen" id="hero-carousel-instance">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <li class="splide__slide flex items-center justify-center bg-gradient-to-r from-indigo-900 to-purple-800 text-center p-8">
+                            <div class="max-w-3xl mx-auto">
+                                <h2 class="text-5xl md:text-7xl font-bold mb-6 drop-shadow-2xl">Timeless Elegance</h2>
+                                <p class="text-xl md:text-2xl mb-12 opacity-95">Discover handcrafted luxury jewelry. Premium quality.</p>
+                                <button onclick="showPage('all')" class="bg-gradient-to-r from-gold to-yellow-500 text-black px-12 py-5 rounded-2xl text-2xl font-bold hover:shadow-2xl transition-all btn-shine">Shop Collection →</button>
+                            </div>
+                        </li>
+                        <li class="splide__slide flex items-center justify-center bg-gradient-to-r from-amber-800 to-rose-800 text-center p-8">
+                            <div class="max-w-3xl mx-auto">
+                                <h2 class="text-5xl md:text-7xl font-bold mb-6">20% OFF New Arrivals</h2>
+                                <button onclick="showPage('all')" class="bg-black text-gold px-12 py-5 rounded-2xl text-2xl font-bold border-2 border-gold transition-all">Exclusive Sale</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ALL PRODUCTS -->
+        <section id="all-page" class="page-section py-24 px-4 bg-slate-900/30 min-h-screen">
+            <div class="container mx-auto">
+                <div class="flex flex-wrap justify-between items-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gold to-amber-300 inline-block">💎 All Masterpieces (25+ Items)</h2>
+                    <button onclick="showPage('home')" class="mt-4 md:mt-0 bg-white/10 px-7 py-3 rounded-2xl hover:bg-gold/20 border border-gold/40">← Back Home</button>
+                </div>
+                <div id="all-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-7"></div>
+            </div>
+        </section>
+
+        <!-- CATEGORY PAGES -->
+        <section id="earrings-page" class="page-section py-24 px-4 bg-gradient-to-br from-indigo-900/40 to-purple-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">✨ Earrings Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="earrings-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
+        <section id="rings-page" class="page-section py-24 px-4 bg-gradient-to-br from-emerald-900/40 to-teal-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">💍 Rings Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="rings-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
+        <section id="necklaces-page" class="page-section py-24 px-4 bg-gradient-to-br from-rose-900/40 to-pink-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">📿 Necklaces Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="necklaces-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
+        <section id="bracelets-page" class="page-section py-24 px-4 bg-gradient-to-br from-amber-900/40 to-orange-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">📿 Bracelets Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="bracelets-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
+    </main>
+
+    <!-- FOOTER (new) -->
+    <footer class="bg-black/80 backdrop-blur-md border-t border-gold/40 mt-16 py-10 px-5">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
+            <div>
+                <h3 class="text-2xl font-bold bg-gradient-to-r from-gold to-yellow-400 bg-clip-text text-transparent mb-4">Quinet Jewelry</h3>
+                <p class="text-sm opacity-75">Premium handcrafted jewelry since 2025. Elegance redefined.</p>
+                <div class="flex justify-center md:justify-start gap-5 mt-5">
+                    <a href="#" class="social-icon text-2xl">📘</a>
+                    <a href="#" class="social-icon text-2xl">📸</a>
+                    <a href="#" class="social-icon text-2xl">🐦</a>
+                    <a href="#" class="social-icon text-2xl">📌</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-xl font-semibold text-gold mb-3">Quick Links</h4>
+                <ul class="space-y-2 text-sm opacity-80">
+                    <li><a href="#" onclick="showPage('home'); return false;" class="hover:text-gold transition">Home</a></li>
+                    <li><a href="#" onclick="showPage('all'); return false;" class="hover:text-gold transition">Shop All</a></li>
+                    <li><a href="#" onclick="showPage('earrings'); return false;" class="hover:text-gold transition">Earrings</a></li>
+                    <li><a href="#" onclick="showPage('rings'); return false;" class="hover:text-gold transition">Rings</a></li>
+                    <li><a href="#" onclick="showPage('necklaces'); return false;" class="hover:text-gold transition">Necklaces</a></li>
                 </ul>
             </div>
-        </div>
-    </section>
-
-    <!-- ALL PRODUCTS -->
-    <section id="all-page" class="page-section py-24 px-4 bg-slate-900/30 min-h-screen">
-        <div class="container mx-auto">
-            <div class="flex flex-wrap justify-between items-center mb-12">
-                <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gold to-amber-300 inline-block">💎 All Masterpieces (25+ Items)</h2>
-                <button onclick="showPage('home')" class="mt-4 md:mt-0 bg-white/10 px-7 py-3 rounded-2xl hover:bg-gold/20 border border-gold/40">← Back Home</button>
+            <div>
+                <h4 class="text-xl font-semibold text-gold mb-3">Customer Care</h4>
+                <ul class="space-y-2 text-sm opacity-80">
+                    <li><a href="#" class="hover:text-gold transition">Contact Us</a></li>
+                    <li><a href="#" class="hover:text-gold transition">Returns & Exchanges</a></li>
+                    <li><a href="#" class="hover:text-gold transition">Shipping Info</a></li>
+                    <li><a href="#" class="hover:text-gold transition">FAQ</a></li>
+                </ul>
             </div>
-            <div id="all-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-7"></div>
+            <div>
+                <h4 class="text-xl font-semibold text-gold mb-3">Contact</h4>
+                <ul class="space-y-2 text-sm opacity-80">
+                    <li>📧 support@quinetjewelry.com</li>
+                    <li>📞 +1 (800) 555-7832</li>
+                    <li>📍 5th Avenue, New York, NY</li>
+                </ul>
+                <div class="mt-4 flex justify-center md:justify-start gap-2">
+                    <span class="text-2xl">💳</span><span class="text-2xl">📱</span><span class="text-2xl">💎</span>
+                </div>
+            </div>
         </div>
-    </section>
-
-    <!-- CATEGORY PAGES -->
-    <section id="earrings-page" class="page-section py-24 px-4 bg-gradient-to-br from-indigo-900/40 to-purple-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">✨ Earrings Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="earrings-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
-    <section id="rings-page" class="page-section py-24 px-4 bg-gradient-to-br from-emerald-900/40 to-teal-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">💍 Rings Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="rings-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
-    <section id="necklaces-page" class="page-section py-24 px-4 bg-gradient-to-br from-rose-900/40 to-pink-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">📿 Necklaces Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="necklaces-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
-    <section id="bracelets-page" class="page-section py-24 px-4 bg-gradient-to-br from-amber-900/40 to-orange-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">📿 Bracelets Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="bracelets-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
+        <div class="text-center text-xs opacity-60 mt-10 pt-5 border-t border-white/10">
+            © 2025 Quinet Jewelry. All rights reserved. | Crafted with elegance
+        </div>
+    </footer>
 
     <script>
-        // ------------------------- PRODUCT DATABASE (25+ items, no missing) -------------------------
+        // ------------------------- PRODUCT DATABASE (your images) -------------------------
         const PRODUCTS = [
             { id: 1, name: '18K Gold Hoop Earrings', price: 89, img: '/images/18KGOLD.webp', category: 'earrings' },
             { id: 2, name: 'Diamond Stud Earrings 0.5ct', price: 199, img: '/images/diamond stud.jpg', category: 'earrings' },
@@ -171,7 +227,7 @@
         ];
 
         // ---------- GLOBAL STATE ----------
-        let cart = [];          // { id, name, price, img, qty }
+        let cart = [];
         let isLoggedIn = false;
 
         // ---------- HELPER: PERSIST CART ----------
@@ -184,7 +240,19 @@
             }
         }
 
-        // ---------- RENDER PRODUCT GRID (no delay, direct) ----------
+        // ---------- LOGOUT FUNCTION (working) ----------
+        function logout() {
+            isLoggedIn = false;
+            const authBtn = document.getElementById('auth-header-btn');
+            if (authBtn) {
+                authBtn.innerText = 'Login';
+                authBtn.onclick = triggerAuth;  // reassign to open login
+            }
+            alert('🔓 You have been logged out successfully.');
+            // optional: clear any user-specific data but keep cart
+        }
+
+        // ---------- RENDER PRODUCT GRID ----------
         function renderGrid(containerId, categoryFilter = null) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -204,14 +272,13 @@
                 `;
                 container.appendChild(card);
             }
-            // attach event listeners to all "Add to Cart" buttons inside this grid (delegation alternative)
             container.querySelectorAll('.add-cart-btn').forEach(btn => {
                 btn.removeEventListener('click', addToCartHandler);
                 btn.addEventListener('click', addToCartHandler);
             });
         }
 
-        // Add to cart handler (extract data)
+        // Add to cart handler
         function addToCartHandler(e) {
             e.stopPropagation();
             const btn = e.currentTarget;
@@ -224,12 +291,11 @@
             else cart.push({ id, name, price, img, qty: 1 });
             updateCartUI();
             saveCart();
-            // mini animation feedback
             gsap.to(btn, { scale: 0.94, duration: 0.08, yoyo: true, repeat: 1 });
             gsap.to('#cart-count-badge', { scale: 1.25, duration: 0.15, yoyo: true, repeat: 1 });
         }
 
-        // Update cart count + modal content
+        // Update cart UI
         function updateCartUI() {
             const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
             document.getElementById('cart-count-badge').innerText = totalQty;
@@ -278,13 +344,11 @@
             saveCart();
         };
 
-        // ---------- PAGE NAVIGATION (instant, no delay) ----------
+        // ---------- PAGE NAVIGATION ----------
         function showPage(pageId) {
-            // hide all pages
             document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
             const target = document.getElementById(`${pageId}-page`);
             if (target) target.classList.add('active');
-            // render grids based on page
             if (pageId === 'all') renderGrid('all-products-grid', null);
             else if (pageId === 'earrings') renderGrid('earrings-category-grid', 'earrings');
             else if (pageId === 'rings') renderGrid('rings-category-grid', 'rings');
@@ -293,32 +357,38 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ---------- AUTH & MODALS ----------
+        // ---------- AUTH & MODALS (with logout integration) ----------
         function triggerAuth() {
             if (isLoggedIn) {
-                alert(`👑 Welcome back, valued customer! You're logged in.`);
-                return;
+                logout();
+            } else {
+                openLoginModal();
             }
-            openLoginModal();
         }
+
         function openLoginModal() {
             const modal = document.getElementById('login-modal');
             modal.style.display = 'flex';
             gsap.fromTo(modal.children[0], { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.2 });
         }
+
         window.handleLogin = () => {
             const email = document.getElementById('login-email').value.trim();
             const pwd = document.getElementById('login-password').value.trim();
             if (email === 'test@test.com' && pwd === '123456') {
                 isLoggedIn = true;
                 const authBtn = document.getElementById('auth-header-btn');
-                if (authBtn) authBtn.innerText = '👤 Account';
+                if (authBtn) {
+                    authBtn.innerText = 'Logout';
+                    authBtn.onclick = triggerAuth; // now logout on click
+                }
                 closeModal('login-modal');
-                alert('✅ Login successful! Start shopping now.');
+                alert('✅ Login successful! You can now checkout.');
             } else {
                 alert('❌ Invalid credentials. Use test@test.com / 123456');
             }
         };
+
         function closeModal(modalId) {
             const el = document.getElementById(modalId);
             if (el) el.style.display = 'none';
@@ -368,7 +438,7 @@
             }
         }
 
-        // ---------- SPLIDE CAROUSEL (safe init) ----------
+        // ---------- SPLIDE CAROUSEL ----------
         let splideInstance = null;
         function initCarousel() {
             if (document.querySelector('.hero-carousel') && !splideInstance) {
@@ -385,10 +455,9 @@
             }
         }
 
-        // ---------- DOM READY: load everything instantly ----------
+        // ---------- DOM READY ----------
         document.addEventListener('DOMContentLoaded', () => {
             loadCartFromStorage();
-            // pre-render all necessary grids to avoid blank states
             renderGrid('all-products-grid', null);
             renderGrid('earrings-category-grid', 'earrings');
             renderGrid('rings-category-grid', 'rings');
@@ -396,10 +465,14 @@
             renderGrid('bracelets-category-grid', 'bracelets');
             initCarousel();
             setupMobileMenu();
-            // ensure home page active initially (already active)
             updateCartUI();
-            // Fix for any missing GSAP/animations
-            console.log('✨ Quinet Jewelry — fully loaded, zero errors');
+            // Ensure auth button reflects logged out initially
+            const authBtn = document.getElementById('auth-header-btn');
+            if (authBtn) {
+                authBtn.innerText = 'Login';
+                authBtn.onclick = triggerAuth;
+            }
+            console.log('✨ Quinet Jewelry — fully loaded with logout & footer');
         });
     </script>
 </body>
