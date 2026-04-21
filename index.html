@@ -33,11 +33,13 @@
         footer a:hover { color: #D4AF37; transform: translateY(-2px); display: inline-block; }
         .social-icon { transition: transform 0.2s, filter 0.2s; }
         .social-icon:hover { transform: translateY(-4px) scale(1.1); filter: drop-shadow(0 0 6px #D4AF37); }
+        .history-card { transition: all 0.2s; }
+        .history-card:hover { transform: translateX(5px); border-left-color: #D4AF37; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white font-sans antialiased flex flex-col min-h-screen">
 
-    <!-- LOGIN MODAL (fixed) -->
+    <!-- LOGIN MODAL -->
     <div id="login-modal" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center p-4 transition-all duration-200">
         <div class="bg-slate-900/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full border border-gold/40 shadow-2xl transform transition-all">
             <h3 class="text-3xl font-bold mb-6 text-center text-gold">🔐 Login / Sign Up</h3>
@@ -95,6 +97,7 @@
                 <button onclick="showPage('rings')" class="px-5 py-2 rounded-full hover:text-gold transition">Rings</button>
                 <button onclick="showPage('necklaces')" class="px-5 py-2 rounded-full hover:text-gold transition">Necklaces</button>
                 <button onclick="showPage('bracelets')" class="px-5 py-2 rounded-full hover:text-gold transition">Bracelets</button>
+                <button onclick="showPage('history')" class="px-5 py-2 rounded-full hover:text-gold transition">📜 History</button>
                 <button id="cart-header-btn" onclick="openCartModal()" class="relative px-5 py-2 rounded-full bg-gold/20 border border-gold/40 hover:bg-gold/40 transition flex items-center gap-1">
                     🛒 <span id="cart-count-badge">0</span>
                 </button>
@@ -145,9 +148,23 @@
         <section id="rings-page" class="page-section py-24 px-4 bg-gradient-to-br from-emerald-900/40 to-teal-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">💍 Rings Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="rings-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
         <section id="necklaces-page" class="page-section py-24 px-4 bg-gradient-to-br from-rose-900/40 to-pink-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">📿 Necklaces Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="necklaces-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
         <section id="bracelets-page" class="page-section py-24 px-4 bg-gradient-to-br from-amber-900/40 to-orange-900/40 min-h-screen"><div class="container mx-auto"><div class="flex flex-wrap justify-between items-center mb-12"><h2 class="text-4xl font-bold">📿 Bracelets Collection</h2><button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl">← All Products</button></div><div id="bracelets-category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div></div></section>
+
+        <!-- ORDER HISTORY PAGE (new) -->
+        <section id="history-page" class="page-section py-24 px-4 bg-gradient-to-br from-slate-800/50 to-gray-900/50 min-h-screen">
+            <div class="container mx-auto max-w-5xl">
+                <div class="flex flex-wrap justify-between items-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gold to-amber-300 inline-block">📜 Order History</h2>
+                    <button onclick="showPage('all')" class="bg-white/10 px-6 py-2 rounded-2xl hover:bg-gold/20 transition">← Continue Shopping</button>
+                </div>
+                <div id="order-history-container" class="space-y-5">
+                    <!-- dynamic history will appear here -->
+                    <div class="text-center py-20 text-2xl opacity-60">✨ No orders yet. Complete a purchase to see your history.</div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- FOOTER (new) -->
+    <!-- FOOTER (with history link) -->
     <footer class="bg-black/80 backdrop-blur-md border-t border-gold/40 mt-16 py-10 px-5">
         <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
             <div>
@@ -165,9 +182,8 @@
                 <ul class="space-y-2 text-sm opacity-80">
                     <li><a href="#" onclick="showPage('home'); return false;" class="hover:text-gold transition">Home</a></li>
                     <li><a href="#" onclick="showPage('all'); return false;" class="hover:text-gold transition">Shop All</a></li>
+                    <li><a href="#" onclick="showPage('history'); return false;" class="hover:text-gold transition">Order History</a></li>
                     <li><a href="#" onclick="showPage('earrings'); return false;" class="hover:text-gold transition">Earrings</a></li>
-                    <li><a href="#" onclick="showPage('rings'); return false;" class="hover:text-gold transition">Rings</a></li>
-                    <li><a href="#" onclick="showPage('necklaces'); return false;" class="hover:text-gold transition">Necklaces</a></li>
                 </ul>
             </div>
             <div>
@@ -197,7 +213,7 @@
     </footer>
 
     <script>
-        // ------------------------- PRODUCT DATABASE (your images) -------------------------
+        // ------------------------- PRODUCT DATABASE (your custom images) -------------------------
         const PRODUCTS = [
             { id: 1, name: '18K Gold Hoop Earrings', price: 89, img: '/images/18KGOLD.webp', category: 'earrings' },
             { id: 2, name: 'Diamond Stud Earrings 0.5ct', price: 199, img: '/images/diamond stud.jpg', category: 'earrings' },
@@ -229,8 +245,77 @@
         // ---------- GLOBAL STATE ----------
         let cart = [];
         let isLoggedIn = false;
+        let currentUserEmail = null;   // store logged-in email
+        let orderHistory = [];          // array of order objects
 
-        // ---------- HELPER: PERSIST CART ----------
+        // ---------- HISTORY MANAGEMENT (keyed by email) ----------
+        function loadHistoryForUser(email) {
+            if (!email) return [];
+            const key = `orderHistory_${email}`;
+            const stored = localStorage.getItem(key);
+            if (stored) {
+                try { return JSON.parse(stored); } catch(e) { return []; }
+            }
+            return [];
+        }
+
+        function saveHistoryForUser(email, history) {
+            if (!email) return;
+            const key = `orderHistory_${email}`;
+            localStorage.setItem(key, JSON.stringify(history));
+        }
+
+        function addOrderToHistory(orderDetails) {
+            if (!currentUserEmail) return;
+            let history = loadHistoryForUser(currentUserEmail);
+            history.unshift(orderDetails); // newest first
+            saveHistoryForUser(currentUserEmail, history);
+            // if history page is active, refresh it
+            if (document.getElementById('history-page').classList.contains('active')) {
+                renderOrderHistory();
+            }
+        }
+
+        // Render order history page
+        function renderOrderHistory() {
+            const container = document.getElementById('order-history-container');
+            if (!container) return;
+            if (!currentUserEmail) {
+                container.innerHTML = `<div class="text-center py-20 text-2xl opacity-60">🔒 Please login to view your order history.</div>`;
+                return;
+            }
+            const history = loadHistoryForUser(currentUserEmail);
+            if (history.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 text-2xl opacity-60">✨ No orders yet. Your purchase history will appear here.</div>`;
+                return;
+            }
+            container.innerHTML = history.map((order, idx) => {
+                const itemsList = order.items.map(item => `${item.name} x${item.qty} - $${(item.price * item.qty).toFixed(2)}`).join('<br>');
+                return `
+                    <div class="history-card bg-slate-800/70 rounded-2xl p-6 border-l-8 border-gold/60 shadow-md hover:shadow-gold/20 transition-all">
+                        <div class="flex flex-wrap justify-between items-start gap-3">
+                            <div>
+                                <p class="text-sm text-gold mb-1">Order #${order.orderId}</p>
+                                <p class="text-xs opacity-60">${order.date}</p>
+                            </div>
+                            <span class="bg-gold/20 text-gold px-4 py-1 rounded-full text-sm font-bold">$${order.total.toFixed(2)}</span>
+                        </div>
+                        <div class="mt-4">
+                            <p class="font-semibold">📦 Shipped to: ${order.shippingAddress}</p>
+                            <p class="text-sm opacity-80">💳 Payment: ${order.paymentMethod}</p>
+                        </div>
+                        <details class="mt-4 cursor-pointer group">
+                            <summary class="text-gold font-semibold hover:text-yellow-300 transition">🛍️ View Items (${order.items.length})</summary>
+                            <div class="mt-3 pl-4 text-sm space-y-1 border-l border-gold/30">
+                                ${itemsList}
+                            </div>
+                        </details>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ---------- CART & PERSISTENCE ----------
         function saveCart() { localStorage.setItem('quinet_cart', JSON.stringify(cart)); }
         function loadCartFromStorage() {
             const stored = localStorage.getItem('quinet_cart');
@@ -238,18 +323,6 @@
                 try { cart = JSON.parse(stored); } catch(e) { cart = []; }
                 updateCartUI();
             }
-        }
-
-        // ---------- LOGOUT FUNCTION (working) ----------
-        function logout() {
-            isLoggedIn = false;
-            const authBtn = document.getElementById('auth-header-btn');
-            if (authBtn) {
-                authBtn.innerText = 'Login';
-                authBtn.onclick = triggerAuth;  // reassign to open login
-            }
-            alert('🔓 You have been logged out successfully.');
-            // optional: clear any user-specific data but keep cart
         }
 
         // ---------- RENDER PRODUCT GRID ----------
@@ -278,7 +351,6 @@
             });
         }
 
-        // Add to cart handler
         function addToCartHandler(e) {
             e.stopPropagation();
             const btn = e.currentTarget;
@@ -295,7 +367,6 @@
             gsap.to('#cart-count-badge', { scale: 1.25, duration: 0.15, yoyo: true, repeat: 1 });
         }
 
-        // Update cart UI
         function updateCartUI() {
             const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
             document.getElementById('cart-count-badge').innerText = totalQty;
@@ -354,16 +425,30 @@
             else if (pageId === 'rings') renderGrid('rings-category-grid', 'rings');
             else if (pageId === 'necklaces') renderGrid('necklaces-category-grid', 'necklaces');
             else if (pageId === 'bracelets') renderGrid('bracelets-category-grid', 'bracelets');
+            else if (pageId === 'history') renderOrderHistory();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ---------- AUTH & MODALS (with logout integration) ----------
+        // ---------- AUTH & MODALS (with logout) ----------
         function triggerAuth() {
             if (isLoggedIn) {
                 logout();
             } else {
                 openLoginModal();
             }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUserEmail = null;
+            const authBtn = document.getElementById('auth-header-btn');
+            if (authBtn) {
+                authBtn.innerText = 'Login';
+                authBtn.onclick = triggerAuth;
+            }
+            alert('🔓 You have been logged out successfully.');
+            // Optionally clear cart? Not clearing to preserve but history view will require login
+            if (document.getElementById('history-page').classList.contains('active')) renderOrderHistory();
         }
 
         function openLoginModal() {
@@ -377,13 +462,15 @@
             const pwd = document.getElementById('login-password').value.trim();
             if (email === 'test@test.com' && pwd === '123456') {
                 isLoggedIn = true;
+                currentUserEmail = email;
                 const authBtn = document.getElementById('auth-header-btn');
                 if (authBtn) {
                     authBtn.innerText = 'Logout';
-                    authBtn.onclick = triggerAuth; // now logout on click
+                    authBtn.onclick = triggerAuth;
                 }
                 closeModal('login-modal');
-                alert('✅ Login successful! You can now checkout.');
+                alert('✅ Login successful! You can now checkout and view order history.');
+                if (document.getElementById('history-page').classList.contains('active')) renderOrderHistory();
             } else {
                 alert('❌ Invalid credentials. Use test@test.com / 123456');
             }
@@ -414,12 +501,32 @@
             if (!name || !address) { alert('Please fill in full name and shipping address'); return; }
             const total = parseFloat(document.getElementById('cart-total-price').innerText);
             const method = document.getElementById('payment-select').value;
-            alert(`🎉 ORDER CONFIRMED! 🎉\n\nThank you, ${name}!\nTotal: $${total.toFixed(2)}\nShipping to: ${address}\nPayment: ${method}\n\nYour Quinet Jewelry order is confirmed. ✨`);
+            const orderItems = cart.map(item => ({ name: item.name, price: item.price, qty: item.qty }));
+            const orderId = 'QNT' + Date.now().toString().slice(-8);
+            const orderDate = new Date().toLocaleString();
+            const newOrder = {
+                orderId: orderId,
+                date: orderDate,
+                items: orderItems,
+                total: total,
+                shippingAddress: address,
+                paymentMethod: method,
+                customerName: name
+            };
+            addOrderToHistory(newOrder);
+            alert(`🎉 ORDER CONFIRMED! 🎉\nOrder #${orderId}\nTotal: $${total.toFixed(2)}\nShipping to: ${address}\nPayment: ${method}\n\nYour order has been saved to history.`);
             cart = [];
             updateCartUI();
             saveCart();
             closeModal('checkout-modal');
             showPage('home');
+            // Clear checkout form fields for next use
+            document.getElementById('full-name').value = '';
+            document.getElementById('shipping-address').value = '';
+            document.getElementById('phone-number').value = '';
+            document.getElementById('card-number').value = '';
+            document.getElementById('expiry-date').value = '';
+            document.getElementById('cvv-code').value = '';
         };
 
         // ---------- MOBILE MENU ----------
@@ -427,13 +534,13 @@
             const mobileBtn = document.getElementById('mobile-menu-btn');
             if (mobileBtn) {
                 mobileBtn.onclick = () => {
-                    const pages = ['home','all','earrings','rings','necklaces','bracelets'];
-                    const choice = prompt('Navigate to:\n1.Home 2.All 3.Earrings 4.Rings 5.Necklaces 6.Bracelets\nEnter number (1-6):');
+                    const pages = ['home','all','earrings','rings','necklaces','bracelets','history'];
+                    const choice = prompt('Navigate to:\n1.Home 2.All 3.Earrings 4.Rings 5.Necklaces 6.Bracelets 7.History\nEnter number (1-7):');
                     if (choice && !isNaN(choice)) {
                         const idx = parseInt(choice) - 1;
                         if (pages[idx]) showPage(pages[idx]);
                         else alert('Invalid selection');
-                    } else if (choice) alert('Enter a number between 1-6');
+                    } else if (choice) alert('Enter a number between 1-7');
                 };
             }
         }
@@ -466,13 +573,14 @@
             initCarousel();
             setupMobileMenu();
             updateCartUI();
-            // Ensure auth button reflects logged out initially
             const authBtn = document.getElementById('auth-header-btn');
             if (authBtn) {
                 authBtn.innerText = 'Login';
                 authBtn.onclick = triggerAuth;
             }
-            console.log('✨ Quinet Jewelry — fully loaded with logout & footer');
+            // Preload history container empty
+            renderOrderHistory();
+            console.log('✨ Quinet Jewelry — fully loaded with Order History & logout');
         });
     </script>
 </body>
